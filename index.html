@@ -9,9 +9,10 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- OPTIMASI: Preload gambar penting di atas lipatan (Above the Fold) -->
+    <!-- Prioritaskan ilustrasi utama dengan fetchpriority="high" -->
     <link rel="preload" as="image" href="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png">
-    
-    <link rel="preload" as="image" href="https://i.ibb.co.com/ycNR2jcM/Chat-GPT-Image-1-Nov-2025-18-24-47-removebg-preview.png">
+    <link rel="preload" as="image" href="https://i.ibb.co.com/ycNR2jcM/Chat-GPT-Image-1-Nov-2025-18-24-47-removebg-preview.png" fetchpriority="high">
     
     <style>
         /* Definisi Warna */
@@ -284,7 +285,7 @@
         /* h-17 = 68px (Digunakan untuk cetak) */
         .h-17 { height: 68px; }
         .w-17 { width: 68px; }
-        /* h-18 = 72px (Baru, untuk tanda tangan) */
+        /* h-18 = 72px (Baru, untuk profil pengembang) */
         .h-18 { height: 72px; } 
         .w-18 { width: 72px; }
         /* h-20 = 80px (Lama, untuk tanda tangan) */
@@ -336,7 +337,8 @@
     <div class="no-print sticky-header">
         <div class="max-w-3xl mx-auto flex justify-between items-center p-3 md:p-4">
             <div class="flex items-center space-x-2">
-                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-15 w-15 object-contain">
+                <!-- OPTIMASI: Tambahkan width dan height -->
+                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-15 w-15 object-contain" width="60" height="60" loading="eager">
                 <h1 class="text-xl font-extrabold text-primary">Aplikasi Refleksi "Stop Bullying"</h1>
             </div>
             <button onclick="toggleMenu()" class="text-gray-800 p-2 rounded-full hover:bg-gray-100 transition duration-150 focus:outline-none focus:ring-2 ring-primary">
@@ -367,11 +369,15 @@
             </div>
 
             <div class="mb-8 flex justify-center pt-4 tilt-container" id="image-tilt-container">
+                <!-- OPTIMASI: Tambahkan width dan height (asumsi 300x300) -->
                 <img 
                     src="https://i.ibb.co.com/ycNR2jcM/Chat-GPT-Image-1-Nov-2025-18-24-47-removebg-preview.png" 
                     alt="Ilustrasi Stop Bullying" 
                     class="w-full md:w-3/5 rounded-3xl shadow-2xl border-4 border-primary ring-4 ring-blue-200/50 tilt-element"
                     style="max-width: 300px;"
+                    width="300" 
+                    height="300"
+                    loading="eager" 
                     onerror="this.onerror=null; this.src='https://placehold.co/300x300/1ABC9C/ffffff?text=ILUSTRASI+GAGAL+DIMUAT'"
                 >
             </div>
@@ -433,7 +439,8 @@
         <div id="results-container" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
             <div class="header-with-logo flex justify-between items-center mb-6 border-b-2 border-primary pb-3">
                 <h2 class="text-3xl font-bold text-primary">🏆 Hasil Refleksi Diri</h2>
-                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-17 w-17 object-contain" loading="lazy">
+                <!-- OPTIMASI: Tambahkan width dan height -->
+                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-17 w-17 object-contain" loading="lazy" width="68" height="68">
             </div>
             
             <div class="text-center mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
@@ -466,8 +473,9 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0 0h10m-10 0l-2 2v2m14-2l2 2v2m-6-16v6m-3-3h6"/></svg>
                     Cetak Hasil Refleksi
                 </button>
-                <button onclick="changeStage('splash')" class="flex-1 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-md">
-                    Selesai & Kembali ke Beranda
+                <!-- PERUBAHAN DI SINI: Text dan fungsi onclick menjadi resetApp() -->
+                <button onclick="resetApp()" class="flex-1 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-md">
+                    Reset & Kembali ke Beranda
                 </button>
             </div>
         </div>
@@ -552,11 +560,14 @@
         <div id="poster-stage" class="hidden card bg-white p-4 md:p-6 rounded-3xl transition-all duration-500">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">Poster Anti-Bullying</h2>
             <div class="poster-container w-full mx-auto p-2 md:p-4 bg-gray-50 rounded-xl shadow-inner border border-gray-200">
+                <!-- OPTIMASI: Tambahkan width dan height (asumsi rasio 3:4) -->
                 <img
                     src="https://i.ibb.co.com/ZRGt1kW8/Screenshot-22.png"
                     alt="Poster Stop Bullying: Jadilah Pelopor, Bukan Pelaku"
                     class="max-w-full h-auto rounded-xl border-4 border-primary/50 mx-auto transition-transform duration-300 hover:scale-[1.01] shadow-lg"
                     loading="lazy"
+                    width="600"
+                    height="800"
                     onerror="this.onerror=null; this.src='https://placehold.co/600x800/1ABC9C/ffffff?text=POSTER+GAGAL+DIMUAT'; this.alt='Placeholder Poster Gagal Dimuat';"
                 >
             </div>
@@ -577,6 +588,7 @@
                 
                 <div>
                     <h3 class="text-lg font-semibold text-primary mb-2">Video 1: Mulai dengan Empati</h3>
+                    <!-- OPTIMASI: Tambahkan loading="lazy" pada iframe -->
                     <div class="embed-responsive">
                         <iframe loading="lazy" 
                             src="https://www.canva.com/design/DAG3d2zFKGc/H3KFf-scl_MzZhwW-ldeuQ/watch?embed" 
@@ -594,6 +606,7 @@
                 
                 <div>
                     <h3 class="text-lg font-semibold text-primary mb-2">Video 2: Animasi Pembelajaran</h3>
+                    <!-- OPTIMASI: Tambahkan loading="lazy" pada iframe -->
                     <div class="embed-responsive">
                         <iframe loading="lazy" 
                             src="https://www.canva.com/design/DAG3dpMsxMU/5m8agNJMba34HaqQ6WXh9g/watch?embed" 
@@ -619,18 +632,28 @@
         </div>
 
         <div id="developer-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Profil Pengembang</h2>
+            <!-- HEADER BARU UNTUK PROFIL PENGEMBANG -->
+            <!-- PERUBAHAN DI SINI: Logo Tut Wuri Handayani dihapus -->
+            <div class="flex justify-start items-center mb-6 border-b-2 border-accent pb-3">
+                <h2 class="text-3xl font-bold text-gray-800">Profil Pengembang</h2>
+                <!-- Logo Tut Wuri Handayani telah dihapus sesuai permintaan pengguna -->
+            </div>
             
             <div class="flex flex-col items-center text-center space-y-4 text-gray-700">
                 
                 <div class="p-1 rounded-full bg-gradient-to-br from-accent to-primary shadow-lg">
-                    <img src="https://i.ibb.co.com/ZR1CsWqx/ALFIAN-2024493911-1.jpg" alt="Foto Alfian" class="h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white object-cover" loading="lazy">
+                    <!-- OPTIMASI: Tambahkan width dan height -->
+                    <img src="https://i.ibb.co.com/ZR1CsWqx/ALFIAN-2024493911-1.jpg" alt="Foto Alfian" class="h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white object-cover" loading="lazy" width="144" height="144">
                 </div>
                 
                 <div class="space-y-1">
                     <h3 class="text-2xl font-bold text-primary mt-4">ALFIAN</h3>
                     <p class="text-lg font-medium text-gray-600">Guru Bimbingan dan Konseling</p>
                     <p class="text-md text-gray-500">Kab. Manokwari - Papua Barat</p>
+                    <!-- E-MAIL yang diminta -->
+                    <p class="text-md text-accent font-medium">
+                        <a href="mailto:bkalfian@gmail.com" class="hover:text-primary transition duration-150">bkalfian@gmail.com</a>
+                    </p>
                 </div>
                 
                 <div class="pt-4 max-w-lg">
@@ -645,12 +668,15 @@
                     
                     <p class="text-sm text-gray-700 mb-2">Manokwari, 12 Juli 2024</p>
                     
-                    <!-- TANDA TANGAN DITAMBAHKAN KEMBALI MENGGUNAKAN URL YANG DISEDIAKAN -->
+                    <!-- TANDA TANGAN -->
+                    <!-- OPTIMASI: Tambahkan width dan height -->
                     <img src="https://i.ibb.co.com/Kkpcmpz/ttd.png" 
                         alt="Tanda Tangan Alfian" 
                         class="h-18 w-36 object-contain mb-1"
-                        onerror="this.onerror=null; this.src='https://placehold.co/144x72/E0E0E0/333333?text=TTD+GAGAL+LOAD'" 
                         loading="lazy"
+                        width="144" 
+                        height="72"
+                        onerror="this.onerror=null; this.src='https://placehold.co/144x72/E0E0E0/333333?text=TTD+GAGAL+LOAD'" 
                     >
                     
                     <p class="text-base font-semibold text-gray-800 border-t border-gray-400 w-fit pt-1 px-2">(ALFIAN)</p>
@@ -935,12 +961,41 @@
 
             resultLevel.textContent = level;
             resultLevel.classList.add(...colorClasses.split(' '));
-            // MENGGUNAKAN innerHTML UNTUK MERENDER LIST HTML
+            // MENGGUNANgKAN innerHTML UNTUK MERENDER LIST HTML
             personalAdvice.innerHTML = advice;
 
             // Pindah ke halaman hasil
             changeStage('results');
         }
+
+        /**
+         * Reset semua state aplikasi dan kembali ke Beranda
+         */
+        function resetApp() {
+            // 1. Reset Global State
+            appState.identity = null;
+            appState.score = null;
+
+            // 2. Reset Quiz Form: Hapus semua pilihan radio button
+            const quizForm = document.getElementById('quiz-form');
+            if (quizForm) {
+                const radios = quizForm.querySelectorAll('input[type="radio"]:checked');
+                radios.forEach(radio => radio.checked = false);
+                checkQuizCompletion(); // Update status tombol submit kuis menjadi disabled
+            }
+
+            // 3. Reset Identity Form: Hapus isi input
+            const identityForm = document.getElementById('identity-form');
+            if (identityForm) {
+                document.getElementById('nama').value = '';
+                document.getElementById('kelas').value = '';
+                document.getElementById('sekolah').value = '';
+            }
+
+            // 4. Kembali ke Beranda
+            changeStage('splash');
+        }
+
 
         /**
          * Event listener saat dokumen siap
