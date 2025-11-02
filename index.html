@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Refleksi "Stop Bullying"</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="preload" as="image" href="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png">
+    
+    <link rel="preload" as="image" href="https://i.ibb.co.com/ycNR2jcM/Chat-GPT-Image-1-Nov-2025-18-24-47-removebg-preview.png">
+    
+    <style>
+        /* Definisi Warna */
+        :root {
+            --color-primary: #1ABC9C; /* NEW: Turquoise Blue (Biru Toska) - Warna Utama Tombol & Teks Utama */
+            --color-primary-dark: #148F77; /* NEW: Darker Toska (Hover State) */
+            --color-accent: #0EA5E9; /* Sky Blue - Kejernihan & Keterbukaan */
+            --color-danger: #B91C1C; /* Merah Maroon Tua */
+            --color-warning: #D97706; /* Amber Tua */
+            --color-safe: #059669; /* Hijau Tua - Untuk tombol 'Cetak' */
+            --color-text: #1f2937; /* Default dark text */
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F9FAFB; /* Latar belakang hampir putih */
+            color: var(--color-text);
+        }
+        
+        /* Card styling yang lebih lembut */
+        .card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06), 0 3px 6px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #e5e7eb;
+            position: relative; /* Penting untuk penempatan awan */
+            overflow: hidden; /* Pastikan awan tidak keluar dari batas card */
+        }
+        
+        /* =================================================== */
+        /* DESAIN BARU: GRADIENT BACKGROUND & TILT EFFECT */
+        /* =================================================== */
+        
+        /* Gradien lembut untuk Splash Stage (Beranda) */
+        #splash-stage {
+            /* Subtle gradient from a light blue-green to a very light sky blue */
+            background: linear-gradient(135deg, #e0f7f3 0%, #ebf8ff 100%);
+        }
+
+        /* Container untuk efek 3D Tilt */
+        .tilt-container {
+            perspective: 1000px;
+            /* Tambahkan sedikit ruang agar bayangan tilt tidak terpotong */
+            padding: 1rem; 
+            margin: -1rem; 
+        }
+
+        /* Elemen yang akan dimiringkan (gambarnya) */
+        .tilt-element {
+            /* Tambahkan scale(1.0) sebagai baseline untuk transform */
+            transform: scale(1.0); 
+            /* Memastikan transformasi 3D halus dan cepat */
+            will-change: transform;
+            transition: transform 0.3s ease-out; 
+            transform-style: preserve-3d;
+        }
+
+        /* Styling Modern untuk Skala Likert (Segmented Control) */
+        .likert-group {
+            border: 2px solid #e5e7eb; 
+            border-radius: 0.75rem; 
+            overflow: hidden; 
+        }
+
+        .likert-group input[type="radio"] {
+            display: none;
+        }
+        
+        .likert-group label {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            padding: 0.75rem 0.5rem; 
+            color: #4b5563;
+            text-align: center;
+            flex-grow: 1;
+            font-size: 0.8rem; 
+            font-weight: 500;
+            border-right: 1px solid #e5e7eb; 
+        }
+
+        .likert-group label:last-of-type {
+            border-right: none; 
+        }
+        
+        .likert-group input[type="radio"]:checked + label {
+            background-color: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2); 
+        }
+
+        .likert-group label:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .likert-group input[type="radio"]:checked + label:hover {
+            background-color: var(--color-primary); 
+        }
+
+        /* Styling untuk Header Sticky */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95); /* Sedikit transparan */
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 50;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Bayangan yang lebih lembut */
+        }
+
+        /* Utility Kelas untuk Primary (Biru Toska) */
+        .bg-primary { background-color: var(--color-primary); }
+        .hover\:bg-primary-dark:hover { background-color: var(--color-primary-dark); }
+        .text-primary { color: var(--color-primary); }
+        .border-primary { border-color: var(--color-primary); }
+        .ring-primary { --tw-ring-color: var(--color-primary); }
+
+        .bg-accent { background-color: var(--color-accent); }
+        .hover\:bg-accent-dark:hover { background-color: #0c8cd3; }
+        .text-accent { color: var(--color-accent); }
+        .border-accent { border-color: var(--color-accent); }
+        
+        .bg-danger { background-color: var(--color-danger); }
+        .text-danger { color: var(--color-danger); }
+        .border-danger { border-color: var(--color-danger); }
+
+        .bg-warning { background-color: var(--color-warning); }
+        .text-warning { color: var(--color-warning); }
+        .border-warning { border-color: var(--color-warning); }
+        
+        .bg-safe { background-color: var(--color-safe); }
+        .text-safe { color: var(--color-safe); }
+        .border-safe { border-color: var(--color-safe); }
+        
+        /* Kustom CSS untuk Kontainer Video Responsif */
+        .embed-responsive {
+            position: relative; 
+            width: 100%; 
+            height: 0; 
+            padding-top: 56.2500%; /* Rasio aspek 16:9 */
+            padding-bottom: 0; 
+            box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); 
+            margin-top: 0.5em; 
+            margin-bottom: 0.5em; 
+            overflow: hidden;
+            border-radius: 8px; 
+            will-change: transform;
+        }
+        .embed-responsive iframe {
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            top: 0; 
+            left: 0; 
+            border: none; 
+            padding: 0;
+            margin: 0;
+        }
+        
+        /* =================================================== */
+        /* CSS UNTUK EFEK AWAN DI BERANDA (SPLASH STAGE) */
+        /* =================================================== */
+
+        /* Kontainer untuk menampung awan */
+        .cloud-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none; /* Agar tidak mengganggu interaksi tombol */
+        }
+        
+        /* Base cloud style */
+        .cloud {
+            background: rgba(255, 255, 255, 0.85); /* Lebih putih untuk kontras dengan gradien */
+            border-radius: 100px;
+            position: absolute;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05); /* Bayangan lembut */
+            opacity: 0.8; 
+            transition: transform 1s ease-out;
+        }
+        
+        /* Bentuk Cloud 1 (Awan Besar Kiri Bawah) */
+        .cloud-1 {
+            width: 180px;
+            height: 60px;
+            bottom: -30px;
+            left: -40px;
+            z-index: 1; /* Di bawah konten utama */
+            transform: scale(1.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .cloud-1:after, .cloud-1:before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 100%;
+        }
+        
+        .cloud-1:after {
+            width: 80px;
+            height: 80px;
+            top: -50px;
+            left: 20px;
+            transform: scale(0.8);
+        }
+        
+        .cloud-1:before {
+            width: 120px;
+            height: 120px;
+            top: -70px;
+            right: 40px;
+        }
+        
+        /* Bentuk Cloud 2 (Awan Kecil Kanan Atas) */
+        .cloud-2 {
+            width: 120px;
+            height: 40px;
+            top: 20px;
+            right: -30px;
+            z-index: 1;
+            transform: scale(0.9);
+            animation: float 15s infinite reverse ease-in-out;
+        }
+
+        .cloud-2:after, .cloud-2:before {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 100%;
+        }
+
+        .cloud-2:after {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 10px;
+        }
+
+        .cloud-2:before {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            right: 10px;
+        }
+
+        /* Keyframe untuk animasi mengambang (float) */
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(10px, -5px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Pastikan konten di atas awan */
+        #splash-stage > * {
+            position: relative;
+            z-index: 10; 
+        }
+        
+        /* =================================================== */
+        /* CUSTOM UTILITY UNTUK UKURAN LOGO (h-15, h-17, h-18, h-20) */
+        /* =================================================== */
+        /* h-15 = 60px (Tailwind h-12 = 48px) */
+        .h-15 { height: 60px; }
+        .w-15 { width: 60px; }
+        /* h-17 = 68px (Digunakan untuk cetak) */
+        .h-17 { height: 68px; }
+        .w-17 { width: 68px; }
+        /* h-18 = 72px (Baru, untuk tanda tangan) */
+        .h-18 { height: 72px; } 
+        .w-18 { width: 72px; }
+        /* h-20 = 80px (Lama, untuk tanda tangan) */
+        .h-20 { height: 80px; }
+        .w-20 { width: 80px; }
+
+
+        /* Print media query */
+        @media print {
+            body { background-color: white !important; color: black !important; }
+            .sticky-header { display: none !important; }
+            /* Sembunyikan semua kecuali kontainer hasil saat mencetak */
+            #app-container > div:not(#results-container) { display: none !important; }
+            /* Tampilkan kontainer hasil */
+            #results-container { display: block !important; }
+            
+            .no-print { display: none !important; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+            
+            /* Aturan cetak untuk logo di halaman hasil */
+            /* Pastikan #results-container dan .header-with-logo terlihat */
+            #results-container .header-with-logo {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #333;
+            }
+            #results-container .header-with-logo img {
+                display: block !important; /* Pastikan gambar terlihat saat cetak */
+                height: 68px; /* Menggunakan h-17: 68px */
+                width: 68px; /* Menggunakan w-17: 68px */
+                object-fit: contain;
+            }
+             #results-container .header-with-logo h2 {
+                font-size: 24px;
+                color: black;
+            }
+            
+            .cloud-container {
+                display: none !important; /* Sembunyikan awan saat dicetak */
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="no-print sticky-header">
+        <div class="max-w-3xl mx-auto flex justify-between items-center p-3 md:p-4">
+            <div class="flex items-center space-x-2">
+                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-15 w-15 object-contain">
+                <h1 class="text-xl font-extrabold text-primary">Aplikasi Refleksi "Stop Bullying"</h1>
+            </div>
+            <button onclick="toggleMenu()" class="text-gray-800 p-2 rounded-full hover:bg-gray-100 transition duration-150 focus:outline-none focus:ring-2 ring-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        
+        <div id="nav-menu" class="hidden absolute right-4 md:right-auto md:left-1/2 md:transform md:-translate-x-1/2 mt-1 w-48 bg-white border border-gray-200 rounded-xl shadow-2xl py-2 transform origin-top-right transition duration-200 ease-out z-50">
+            <a href="#" onclick="handleMenuNavigation('splash'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">🏡 Beranda</a>
+            <a href="#" onclick="handleMenuNavigation('education'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">📚 Bahan Baca</a>
+            <a href="#" onclick="handleMenuNavigation('legal'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">⚖️ UU & Hukuman</a>
+            <a href="#" onclick="handleMenuNavigation('video'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">🎥 Video</a>
+            <a href="#" onclick="handleMenuNavigation('poster'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">🖼️ Poster</a>
+            <a href="#" onclick="handleMenuNavigation('quiz'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">📝 Pertanyaan (Tes)</a>
+            <a href="#" onclick="handleMenuNavigation('results'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium">🏆 Hasil Tes</a>
+            <a href="#" onclick="handleMenuNavigation('developer'); return false;" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition duration-150 font-medium border-t mt-1 pt-1">👨‍💻 Pengembang</a>
+        </div>
+    </div>
+    
+    <div id="app-container" class="w-full max-w-3xl mt-20 md:mt-24">
+
+        <div id="splash-stage" class="card p-8 md:p-12 rounded-3xl text-center transition-all duration-500">
+            <div class="cloud-container">
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+            </div>
+
+            <div class="mb-8 flex justify-center pt-4 tilt-container" id="image-tilt-container">
+                <img 
+                    src="https://i.ibb.co.com/ycNR2jcM/Chat-GPT-Image-1-Nov-2025-18-24-47-removebg-preview.png" 
+                    alt="Ilustrasi Stop Bullying" 
+                    class="w-full md:w-3/5 rounded-3xl shadow-2xl border-4 border-primary ring-4 ring-blue-200/50 tilt-element"
+                    style="max-width: 300px;"
+                    onerror="this.onerror=null; this.src='https://placehold.co/300x300/1ABC9C/ffffff?text=ILUSTRASI+GAGAL+DIMUAT'"
+                >
+            </div>
+
+            <h2 class="text-3xl md:text-4xl font-extrabold text-primary mb-4">JADILAH PELOPOR DAN PELAPOR</h2>
+
+            <p class="text-lg text-gray-700 mb-10 leading-relaxed">
+                “Setiap orang punya kekuatan untuk memilih kebaikan. Langkah kecilmu hari ini adalah awal dari perubahan besar bagi dirimu dan lingkunganmu.”
+            </p>
+
+            <button onclick="changeStage('identity')" class="bg-primary hover:bg-primary-dark text-white font-bold py-4 px-10 rounded-full transition duration-300 transform hover:scale-105 shadow-xl shadow-primary/50 uppercase tracking-wider">
+                Mulai Refleksi Diri Sekarang
+            </button>
+            
+            <div class="mt-10 text-center text-xs text-gray-400 no-print">
+                Hak Cipta © 2024. Dikembangkan oleh ALFIAN – Guru Bimbingan dan Konseling ( Kab. Manokwari - Papua Barat ).
+            </div>
+        </div>
+
+        <div id="identity-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">Identitas Peserta Refleksi</h2>
+            
+            <form id="identity-form" class="space-y-6">
+                <div>
+                    <label for="nama" class="block text-lg font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                    <input type="text" id="nama" required class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-accent focus:border-accent transition duration-200" placeholder="Contoh: Budi Santoso">
+                </div>
+                <div>
+                    <label for="kelas" class="block text-lg font-medium text-gray-700 mb-2">Kelas</label>
+                    <input type="text" id="kelas" required class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-accent focus:border-accent transition duration-200" placeholder="Contoh: IX A">
+                </div>
+                <div>
+                    <label for="sekolah" class="block text-lg font-medium text-gray-700 mb-2">Sekolah</label>
+                    <input type="text" id="sekolah" required class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-accent focus:border-accent transition duration-200" placeholder="Contoh: SMP Negeri 6 Manokwari">
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-extrabold py-4 rounded-xl transition duration-300 transform hover:scale-[1.01] shadow-xl shadow-primary/70 text-lg uppercase tracking-wider">
+                        Lanjutkan ke Tes Refleksi
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="quiz-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 border-b-2 border-accent pb-2">Tes Refleksi Diri</h2>
+            <p class="text-gray-600 mb-8">Pilih jawaban yang paling sesuai dengan kondisimu saat ini. Jawab dengan jujur! (1: Sangat Jarang, 5: Sangat Sering)</p>
+
+            <form id="quiz-form" class="space-y-8">
+                
+            </form>
+
+            <div class="pt-10">
+                <button onclick="calculateResults()" id="submit-quiz-btn" disabled class="w-full bg-gray-400 text-white font-bold py-3 rounded-xl opacity-80 cursor-not-allowed transition duration-300 transform hover:scale-[1.005]">
+                    (Harap Jawab Semua 10 Pertanyaan)
+                </button>
+            </div>
+        </div>
+
+        <div id="results-container" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <div class="header-with-logo flex justify-between items-center mb-6 border-b-2 border-primary pb-3">
+                <h2 class="text-3xl font-bold text-primary">🏆 Hasil Refleksi Diri</h2>
+                <img src="https://i.ibb.co.com/GwcfnGQ/cropped-Logo-Tut-Wuri-Handayani-PNG-Warna-1.png" alt="Logo Tut Wuri Handayani" class="h-17 w-17 object-contain" loading="lazy">
+            </div>
+            
+            <div class="text-center mb-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <p class="text-lg text-gray-700">Nama: <span id="user-info-display" class="font-bold text-gray-900">Belum Diisi</span></p>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="lg font-semibold text-gray-800 mb-4">Level Kesadaranmu Saat Ini:</h3>
+                <div id="result-level" class="text-xl font-bold p-4 rounded-xl text-center shadow-lg border-4 transition-all duration-300 bg-danger text-white border-danger">
+                    Selesaikan Tes untuk Melihat Hasil
+                </div>
+            </div>
+            
+            <div class="mb-10">
+                <h3 class="lg font-semibold text-gray-800 mb-2">Total Poin Kebaikan (Max 50): <span class="font-extrabold text-primary" id="score-display">0 / 50</span></h3>
+                <div class="w-full bg-gray-200 rounded-full h-4 shadow-inner">
+                    <div id="progress-bar" class="h-4 rounded-full transition-all duration-700 bg-primary" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="p-6 bg-gray-50 rounded-xl border-l-4 border-accent shadow-md mb-8">
+                <h3 class="text-xl font-bold text-accent mb-3">Saran dan Tindak Lanjut:</h3>
+                <div id="personal-advice" class="text-gray-700">
+                    Saran personal akan muncul di sini setelah kamu menjawab semua pertanyaan di Tes Refleksi Diri.
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4 no-print">
+                <button onclick="window.print()" class="flex-1 bg-safe hover:bg-green-700 text-white font-bold py-3 rounded-xl transition duration-300 shadow-md flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m0 0h10m-10 0l-2 2v2m14-2l2 2v2m-6-16v6m-3-3h6"/></svg>
+                    Cetak Hasil Refleksi
+                </button>
+                <button onclick="changeStage('splash')" class="flex-1 bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-md">
+                    Selesai & Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+        
+        <div id="education-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">📚 Bahan Baca: Mengenal Bullying</h2>
+            
+            <div class="space-y-6 text-gray-700">
+                <div class="p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
+                    <h3 class="text-xl font-bold text-primary mb-2">Apa itu Bullying?</h3>
+                    <p>Bullying adalah tindakan penggunaan kekerasan, ancaman, atau paksaan untuk menyalahgunakan atau mengintimidasi orang lain secara berulang-ulang, yang memiliki potensi merugikan secara fisik dan psikologis.</p>
+                </div>
+                
+                <div class="p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
+                    <h3 class="text-xl font-bold text-primary mb-2">Jenis-Jenis Bullying:</h3>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>**Fisik:** Memukul, menendang, mendorong, merusak barang.</li>
+                        <li>**Verbal:** Mengejek, menghina, memfitnah, mengancam.</li>
+                        <li>**Sosial (Relasional)::** Mengucilkan, menyebarkan rumor, merusak reputasi.</li>
+                        <li>**Siber (Cyberbullying)::** Komentar jahat di media sosial, menyebar foto/video memalukan.</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 bg-safe/10 rounded-lg border-l-4 border-safe">
+                    <h3 class="text-xl font-bold text-safe mb-3">Makna "Pelopor dan Pelapor"</h3>
+                    
+                    <h4 class="font-semibold text-gray-800 mt-2 mb-1">1. Pelopor Kebaikan (Inisiator)</h4>
+                    <p class="mb-3">Tujuannya adalah menjadi individu yang **memimpin perubahan positif**. Dalam konteks anti-bullying, seorang Pelopor adalah yang pertama bersikap ramah, mengundang teman yang terasing, dan berani menunjukkan bahwa lingkungan sekolahnya adalah tempat yang aman dan inklusif. Jadilah contoh, bukan pengekor.</p>
+                    
+                    <h4 class="font-semibold text-gray-800 mb-1">2. Pelapor Kebenaran (Penjaga Integritas)</h4>
+                    <p>Tujuannya adalah memiliki **keberanian moral untuk bertindak**. Pelapor adalah seseorang yang tidak tinggal diam saat melihat ketidakadilan. Mereka melaporkan kejadian bullying kepada guru atau pihak berwenang. Melapor BUKAN berkhianat, melainkan bentuk perlindungan terhadap teman dan penegakan keadilan di sekolah.</p>
+                </div>
+
+                <div class="p-4 bg-primary/10 rounded-lg border-l-4 border-primary">
+                    <h3 class="text-xl font-bold text-primary mb-2">Dampak Bullying:</h3>
+                    <p>Korban dapat mengalami depresi, kecemasan, rasa takut pergi ke sekolah, penurunan prestasi, hingga masalah kesehatan mental jangka panjang. Pelaku juga berisiko tinggi terlibat dalam tindakan kriminal di masa depan.</p>
+                </div>
+            </div>
+            
+            <div class="pt-8 no-print">
+                <button onclick="changeStage('splash')" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+
+        <div id="legal-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">⚖️ Konsekuensi Hukum Tindakan Bullying</h2>
+            
+            <div class="space-y-6 text-gray-700">
+                <div class="p-4 bg-danger/10 rounded-lg border-l-4 border-danger">
+                    <h3 class="text-xl font-bold text-danger mb-2">1. UU Perlindungan Anak (UU No. 35 Tahun 2014)</h3>
+                    <p>Pasal 76C: Setiap orang dilarang menempatkan, membiarkan, melakukan, menyuruh melakukan, atau turut serta melakukan Kekerasan terhadap Anak. Pelaku dapat dikenakan pidana penjara maksimal **5 tahun** dan/atau **Denda Maksimal Rp 100.000.000,- (Seratus Juta Rupiah)**.</p>
+                </div>
+                
+                <div class="p-4 bg-danger/10 rounded-lg border-l-4 border-danger">
+                    <h3 class="text-xl font-bold text-danger mb-2">2. KUHP (Kitab Undang-Undang Hukum Pidana)</h3>
+                    <ul class="list-disc list-inside space-y-1 ml-4">
+                        <li>**Penganiayaan (Pasal 351):** Jika bullying melibatkan kekerasan fisik, dapat diancam pidana penjara.</li>
+                        <li>**Pencemaran Nama Baik/Fitnah (Pasal 310/311):** Jika bullying verbal atau media sosial merusak nama baik, dapat dijerat pasal ini.</li>
+                        <li>**Perbuatan Tidak Menyenangkan (Pasal 335):** Untuk ancaman dan pemaksaan.</li>
+                    </ul>
+                </div>
+                
+                <div class="p-4 bg-danger/10 rounded-lg border-l-4 border-danger">
+                    <h3 class="text-xl font-bold text-danger mb-2">3. UU ITE (Untuk Cyberbullying)</h3>
+                    <p>Tindakan menyebarkan informasi yang bermuatan penghinaan dan/atau pencemaran nama baik melalui media elektronik dapat diancam pidana penjara maksimal **4 tahun** dan/atau **Denda Maksimal hingga Rp 750.000.000,-**.</p>
+                </div>
+                
+                <p class="mt-6 text-sm text-gray-500 italic">
+                    *Catatan: Bagi pelaku anak di bawah umur, akan diberlakukan Undang-Undang Sistem Peradilan Pidana Anak (UU SPPA) yang mengutamakan diversi (penyelesaian di luar pengadilan).*
+                </p>
+            </div>
+            
+            <div class="pt-8 no-print">
+                <button onclick="changeStage('splash')" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+
+        <div id="poster-stage" class="hidden card bg-white p-4 md:p-6 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">Poster Anti-Bullying</h2>
+            <div class="poster-container w-full mx-auto p-2 md:p-4 bg-gray-50 rounded-xl shadow-inner border border-gray-200">
+                <img
+                    src="https://i.ibb.co.com/ZRGt1kW8/Screenshot-22.png"
+                    alt="Poster Stop Bullying: Jadilah Pelopor, Bukan Pelaku"
+                    class="max-w-full h-auto rounded-xl border-4 border-primary/50 mx-auto transition-transform duration-300 hover:scale-[1.01] shadow-lg"
+                    loading="lazy"
+                    onerror="this.onerror=null; this.src='https://placehold.co/600x800/1ABC9C/ffffff?text=POSTER+GAGAL+DIMUAT'; this.alt='Placeholder Poster Gagal Dimuat';"
+                >
+            </div>
+            
+            <div class="pt-8 no-print">
+                <button onclick="changeStage('splash')" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+        
+        <div id="video-stage" class="hidden card bg-white p-6 md:p-8 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-accent pb-3">Tonton Video Edukasi Anti-Bullying</h2>
+            
+            <p class="text-gray-600 mb-6 font-medium">Berikut adalah dua video edukasi yang mengajak Anda meningkatkan kesadaran dan empati terhadap Bahaya perilaku bullying.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-2">Video 1: Mulai dengan Empati</h3>
+                    <div class="embed-responsive">
+                        <iframe loading="lazy" 
+                            src="https://www.canva.com/design/DAG3d2zFKGc/H3KFf-scl_MzZhwW-ldeuQ/watch?embed" 
+                            allowfullscreen="allowfullscreen" 
+                            allow="fullscreen"
+                            title="STOP BULLYING MULAILAH DENGAN EMPATI">
+                        </iframe>
+                    </div>
+                    <a href="https://www.canva.com/design/DAG3d2zFKGc/H3KFf-scl_MzZhwW-ldeuQ/watch?utm_content=DAG3d2zFKGc&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" 
+                       target="_blank" rel="noopener"
+                       class="block text-center text-sm text-accent hover:text-primary transition duration-150 font-semibold mt-2 p-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200">
+                        STOP BULLYING MULAILAH DENGAN EMPATI
+                    </a>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-primary mb-2">Video 2: Animasi Pembelajaran</h3>
+                    <div class="embed-responsive">
+                        <iframe loading="lazy" 
+                            src="https://www.canva.com/design/DAG3dpMsxMU/5m8agNJMba34HaqQ6WXh9g/watch?embed" 
+                            allowfullscreen="allowfullscreen" 
+                            allow="fullscreen"
+                            title="STOP BULLYING | Animasi pembelajaran">
+                        </iframe>
+                    </div>
+                    <a href="https://www.canva.com/design/DAG3dpMsxMU/5m8agNJMba34HaqQ6WXh9g/watch?utm_content=DAG3dpMsxMU&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" 
+                       target="_blank" rel="noopener"
+                       class="block text-center text-sm text-accent hover:text-primary transition duration-150 font-semibold mt-2 p-2 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200">
+                        STOP BULLYING | Animasi pembelajaran
+                    </a>
+                </div>
+
+            </div> 
+
+            <div class="pt-8 no-print">
+                <button onclick="changeStage('splash')" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+
+        <div id="developer-stage" class="hidden card bg-white p-8 md:p-10 rounded-3xl transition-all duration-500">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Profil Pengembang</h2>
+            
+            <div class="flex flex-col items-center text-center space-y-4 text-gray-700">
+                
+                <div class="p-1 rounded-full bg-gradient-to-br from-accent to-primary shadow-lg">
+                    <img src="https://i.ibb.co.com/ZR1CsWqx/ALFIAN-2024493911-1.jpg" alt="Foto Alfian" class="h-32 w-32 md:h-36 md:w-36 rounded-full border-4 border-white object-cover" loading="lazy">
+                </div>
+                
+                <div class="space-y-1">
+                    <h3 class="text-2xl font-bold text-primary mt-4">ALFIAN</h3>
+                    <p class="text-lg font-medium text-gray-600">Guru Bimbingan dan Konseling</p>
+                    <p class="text-md text-gray-500">Kab. Manokwari - Papua Barat</p>
+                </div>
+                
+                <div class="pt-4 max-w-lg">
+                    <p class="text-lg leading-relaxed text-gray-600">
+                        Aplikasi ini dikembangkan sebagai media refleksi diri bagi siswa untuk meningkatkan kesadaran akan bahaya bullying dan mendorong terciptanya lingkungan sekolah yang positif dan aman.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="w-full flex justify-end mt-8">
+                <div class="flex flex-col items-center text-center">
+                    
+                    <p class="text-sm text-gray-700 mb-2">Manokwari, 12 Juli 2024</p>
+                    
+                    <!-- TANDA TANGAN DITAMBAHKAN KEMBALI MENGGUNAKAN URL YANG DISEDIAKAN -->
+                    <img src="https://i.ibb.co.com/Kkpcmpz/ttd.png" 
+                        alt="Tanda Tangan Alfian" 
+                        class="h-18 w-36 object-contain mb-1"
+                        onerror="this.onerror=null; this.src='https://placehold.co/144x72/E0E0E0/333333?text=TTD+GAGAL+LOAD'" 
+                        loading="lazy"
+                    >
+                    
+                    <p class="text-base font-semibold text-gray-800 border-t border-gray-400 w-fit pt-1 px-2">(ALFIAN)</p>
+                </div>
+            </div>
+            
+            <div class="pt-10 flex justify-center no-print">
+                <button onclick="changeStage('splash')" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-10 rounded-full transition duration-300 shadow-lg shadow-primary/50 transform hover:scale-105">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+
+    </div> 
+
+<script>
+        // Data Kuis (10 Pertanyaan)
+        const quizData = [
+            { question: "Saya menyapa teman yang terlihat sendirian." },
+            { question: "Saya mengajak teman yang dikucilkan untuk bermain/belajar bersama." },
+            { question: "Saya memuji kelebihan teman di depannya (bukan mengejek kekurangannya)." },
+            { question: "Saya menolak untuk ikut-ikutan menyebarkan gosip atau ejekan tentang teman." },
+            { question: "Saya membela teman yang sedang diejek atau dirundung dengan cara yang baik." },
+            { question: "Saya mendengarkan curhat teman yang sedang sedih atau punya masalah." },
+            { question: "Saya berani melaporkan tindakan bullying (ejekan, fisik) yang saya lihat kepada guru atau wali kelas." },
+            { question: "Saya menasihati teman yang saya lihat mulai mengejek atau mengganggu orang lain." },
+            { question: "Saya menghargai perbedaan pendapat dengan teman tanpa perlu bermusuhan." },
+            { question: "Saya menyebarkan hal-hal positif (bukan gosip) tentang teman-teman saya." }
+        ];
+
+        // Global state untuk melacak kemajuan
+        let appState = {
+            identity: null,
+            score: null
+        };
+        
+        // Daftar semua ID stage untuk navigasi
+        const allStages = [
+            'splash-stage', 'identity-stage', 'quiz-stage', 'results-container',
+            'education-stage', 'legal-stage', 'poster-stage', 'video-stage', 'developer-stage'
+        ];
+
+        /**
+         * Fungsi utama untuk berpindah halaman/stage
+         */
+        function changeStage(stageName) {
+            allStages.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+
+            const targetId = (stageName === 'results') ? 'results-container' : stageName + '-stage';
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+                window.scrollTo(0, 0); // Selalu scroll ke atas saat ganti stage
+            }
+        }
+
+        /**
+         * Menampilkan/menyembunyikan menu navigasi
+         */
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        /**
+         * Navigasi dari menu, dengan logika validasi
+         */
+        function handleMenuNavigation(stageName) {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.add('hidden'); // Selalu tutup menu setelah diklik
+
+            // Logika untuk mencegah lompat stage
+            if ((stageName === 'quiz' || stageName === 'results') && !appState.identity) {
+                // Jika belum isi identitas, paksa ke 'identity'
+                changeStage('identity');
+                return;
+            }
+            
+            if (stageName === 'results' && appState.score === null) {
+                // Jika belum isi kuis, paksa ke 'quiz'
+                return;
+            }
+            
+            changeStage(stageName);
+        }
+
+        /**
+         * Memuat pertanyaan kuis ke dalam form
+         */
+        function loadQuiz() {
+            const quizForm = document.getElementById('quiz-form');
+            if (!quizForm) return;
+
+            let quizHTML = '';
+            quizData.forEach((item, index) => {
+                const qNum = index + 1;
+                quizHTML += `
+                    <div class="p-5 bg-white rounded-xl border-2 border-gray-100 shadow-sm">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-5">${qNum}. ${item.question}</h3>
+                        <div class="likert-group flex flex-row">
+                            <input type="radio" id="q${qNum}_1" name="q${qNum}" value="1" onchange="checkQuizCompletion()" required>
+                            <label for="q${qNum}_1">Sangat<br>Jarang</label>
+                            
+                            <input type="radio" id="q${qNum}_2" name="q${qNum}" value="2" onchange="checkQuizCompletion()">
+                            <label for="q${qNum}_2">Jarang</label>
+                            
+                            <input type="radio" id="q${qNum}_3" name="q${qNum}" value="3" onchange="checkQuizCompletion()">
+                            <label for="q${qNum}_3">Kadang-<br>Kadang</label>
+                            
+                            <input type="radio" id="q${qNum}_4" name="q${qNum}" value="4" onchange="checkQuizCompletion()">
+                            <label for="q${qNum}_4">Sering</label>
+                            
+                            <input type="radio" id="q${qNum}_5" name="q${qNum}" value="5" onchange="checkQuizCompletion()">
+                            <label for="q${qNum}_5">Sangat<br>Sering</label>
+                        </div>
+                    </div>
+                `;
+            });
+            quizForm.innerHTML = quizHTML;
+        }
+
+        /**
+         * Memeriksa apakah semua pertanyaan kuis sudah dijawab
+         */
+        function checkQuizCompletion() {
+            const totalQuestions = quizData.length;
+            const answeredQuestions = document.querySelectorAll('#quiz-form input[type="radio"]:checked').length;
+            const submitBtn = document.getElementById('submit-quiz-btn');
+
+            if (answeredQuestions === totalQuestions) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Lihat Hasil Refleksi';
+                submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed', 'opacity-80');
+                submitBtn.classList.add('bg-primary', 'hover:bg-primary-dark');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = `(Harap Jawab Semua ${totalQuestions} Pertanyaan)`;
+                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed', 'opacity-80');
+                submitBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+            }
+        }
+
+        /**
+         * Menghitung hasil kuis dan menampilkannya
+         */
+        function calculateResults() {
+            let totalScore = 0;
+            const totalQuestions = quizData.length;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    totalScore += parseInt(selected.value);
+                }
+            }
+
+            // Simpan skor
+            appState.score = totalScore;
+
+            // Tampilkan Info User
+            const userInfoDisplay = document.getElementById('user-info-display');
+            userInfoDisplay.textContent = `${appState.identity.nama} (${appState.identity.kelas}, ${appState.identity.sekolah})`;
+
+            // Tampilkan Skor & Progress Bar
+            const scoreDisplay = document.getElementById('score-display');
+            const progressBar = document.getElementById('progress-bar');
+            const maxScore = totalQuestions * 5; // 10 * 5 = 50
+            const percentage = (totalScore / maxScore) * 100;
+            
+            scoreDisplay.textContent = `${totalScore} / ${maxScore}`;
+            progressBar.style.width = `${percentage}%`;
+
+            // Tentukan Level, Saran, dan Warna
+            const resultLevel = document.getElementById('result-level');
+            const personalAdvice = document.getElementById('personal-advice');
+            let level = '';
+            let advice = '';
+            let colorClasses = '';
+
+            // Hapus kelas warna sebelumnya
+            const colors = ['bg-safe', 'bg-primary', 'bg-accent', 'bg-warning', 'bg-danger', 'border-safe', 'border-primary', 'border-accent', 'border-warning', 'border-danger', 'text-safe', 'text-primary', 'text-accent', 'text-warning', 'text-danger', 'bg-gray-200', 'text-gray-800', 'border-gray-300', 'text-white'];
+            resultLevel.classList.remove(...colors);
+            progressBar.classList.remove(...colors); // Hapus kelas warna dari progress bar juga
+
+            if (totalScore >= 41) {
+                level = "Pelopor & Pelapor Sejati";
+                advice = `
+                    <div class="p-4 mb-5 bg-safe/10 rounded-xl border-l-4 border-safe shadow-sm">
+                        <p class="text-gray-700 font-medium">
+                            <span class="font-semibold text-safe">Keterangan:</span> Luar biasa! Anda memiliki empati, keberanian moral, dan secara konsisten bertindak proaktif. <span class="font-bold">Maksud dari skor ini adalah Anda adalah pemimpin perubahan.</span> Fokus Anda harus beralih pada **menginspirasi orang lain** (menjadi mentor) dan memastikan Anda tetap waspada dan konsisten dalam perilaku positif setiap hari.
+                        </p>
+                    </div>
+                    <p class="font-bold text-xl text-safe mb-2">Langkah Konkret Selanjutnya:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                        <li>**Jadilah Mentor:** Tawarkan diri untuk membantu teman yang sedang mengalami kesulitan atau yang masih bingung tentang cara bersikap positif.</li>
+                        <li>**Inisiasi Kampanye:** Ajak guru BK atau OSIS untuk membuat kampanye kecil anti-bullying.</li>
+                        <li>**Pimpin Contoh:** Terus lakukan kebaikan kecil sehari-hari (menyapa, memuji, mendengarkan) tanpa mengharapkan imbalan.</li>
+                        <li>**Selalu Waspada:** Tetaplah menjadi mata dan telinga yang peka. Jangan pernah merasa 'sudah selesai' dalam melawan bullying.</li>
+                    </ul>
+                `;
+                colorClasses = 'bg-safe text-white border-green-700';
+                progressBar.classList.add('bg-safe');
+            } else if (totalScore >= 31) {
+                level = "Pemerhati yang Baik";
+                advice = `
+                    <div class="p-4 mb-5 bg-primary/10 rounded-xl border-l-4 border-primary shadow-sm">
+                        <p class="text-gray-700 font-medium">
+                            <span class="font-semibold text-primary">Keterangan:</span> Anda sudah memiliki kesadaran dan kepedulian yang baik terhadap teman-teman dan sering bertindak positif, artinya Anda berada di jalur yang tepat. <span class="font-bold">Maksud dari skor ini adalah Anda perlu mengasah keterampilan Pelapor.</span> Target Anda adalah mengambil tindakan berani seperti **melaporkan kejadian bullying** yang Anda lihat kepada guru atau pihak berwenang, dan mempelajari cara intervensi yang aman.
+                        </p>
+                    </div>
+                    <p class="font-bold text-xl text-primary mb-2">Langkah Konkret Selanjutnya:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                        <li>**Asah Keberanian Melapor:** Jika kamu melihat bullying, segera laporkan pada guru/wali kelas. Ingat, melapor adalah bentuk perlindungan, bukan pengkhianatan.</li>
+                        <li>**Intervensi Aman:** Pelajari cara mengintervensi situasi bullying tanpa membahayakan diri sendiri (misalnya, memanggil orang dewasa, atau mengajak korban pergi dari lokasi kejadian).</li>
+                        <li>**Bangun Jaringan:** Jalin komunikasi yang baik dengan Guru BK atau konselor sekolah. Anggap mereka sebagai partner dalam menjaga sekolah tetap aman.</li>
+                        <li>**Berani Berbicara:** Jika kamu hanya diam 1 dari 10 kali melihat ejekan, targetkan untuk tidak diam lagi di kesempatan berikutnya.</li>
+                    </ul>
+                `;
+                colorClasses = 'bg-primary text-white border-primary-dark';
+                progressBar.classList.add('bg-primary');
+            } else if (totalScore >= 21) {
+                level = "Mulai Peduli";
+                advice = `
+                    <div class="p-4 mb-5 bg-accent/10 rounded-xl border-l-4 border-accent shadow-sm">
+                        <p class="text-gray-700 font-medium">
+                            <span class="font-semibold text-accent">Keterangan:</span> Anda sudah memiliki bibit kebaikan dan peduli, ditandai dengan beberapa tindakan positif, namun masih sering ragu atau takut untuk bertindak secara konsisten. <span class="font-bold">Maksud dari skor ini adalah Anda berada di ambang perubahan besar.</span> Fokuslah pada **konsistensi** dalam hal-hal kecil, seperti menyapa teman dan menolak ikut campur dalam pembicaraan negatif, hingga keberanian Anda terbentuk.
+                        </p>
+                    </div>
+                    <p class="font-bold text-xl text-accent mb-2">Langkah Konkret Selanjutnya:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                        <li>**Latih Sapaan:** Mulai dari hal paling mudah: Sapa 3 orang berbeda setiap hari yang biasanya tidak kamu ajak bicara. Ini melatihmu menjadi 'Pelopor'.</li>
+                        <li>**Tetapkan Batasan:** Jika ada teman yang bergosip atau mengejek, katakan dengan sopan, "Aku tidak tertarik dengan topik itu," atau "Aku tidak mau ikut mengejek."</li>
+                        <li>**Cari Role Model:** Perhatikan teman atau kakak kelas yang sering melakukan hal baik. Pelajari cara mereka berinteraksi dan meniru keberanian mereka.</li>
+                        <li>**Tulis Komitmen:** Tulis satu janji (misalnya, "Aku akan membela teman yang diganggu") dan tempel di tempat yang bisa kamu lihat.</li>
+                    </ul>
+                `;
+                colorClasses = 'bg-accent text-white border-blue-700';
+                progressBar.classList.add('bg-accent');
+            } else if (totalScore >= 11) {
+                level = "Perlu Lebih Berani";
+                advice = `
+                    <div class="p-4 mb-5 bg-warning/10 rounded-xl border-l-4 border-warning shadow-sm">
+                        <p class="text-gray-700 font-medium">
+                            <span class="font-semibold text-warning">Keterangan:</span> Anda menyadari adanya perilaku bullying/negatif tetapi sering memilih untuk diam atau menghindari konfrontasi karena takut atau khawatir. <span class="font-bold">Maksud dari skor ini adalah Anda perlu mempraktikkan keberanian moral.</span> Langkah terpenting adalah **berhenti ikut-ikutan** dalam perilaku negatif (gosip, ejekan) dan mulai mencari satu orang dewasa yang dapat Anda jadikan sekutu untuk melaporkan kejadian.
+                        </p>
+                    </div>
+                    <p class="font-bold text-xl text-warning mb-2">Langkah Konkret Selanjutnya:</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                        <li>**Stop Ikut:** Jika kamu merasa pernah ikut-ikutan menyebarkan gosip atau ejekan, segera hentikan! Itu langkah paling penting saat ini.</li>
+                        <li>**Identifikasi Pemicu:** Pikirkan, situasi seperti apa yang membuatmu ikut-ikutan? Hindari situasi atau teman yang memicu perilaku negatif tersebut.</li>
+                        <li>**Cari Sekutu:** Cari satu orang teman (atau Guru BK) yang kamu percaya dan jadikan tempat curhat. Berbagi beban bisa mengurangi rasa takutmu untuk bertindak.</li>
+                        <li>**Edukasi Diri:** Tonton kembali video edukasi di aplikasi ini atau baca materi "Bahan Baca" untuk memahami dampak buruk bullying.</li>
+                    </ul>
+                `;
+                colorClasses = 'bg-warning text-white border-yellow-700';
+                progressBar.classList.add('bg-warning');
+            } else {
+                level = "Sangat Perlu Bimbingan";
+                advice = `
+                    <div class="p-4 mb-5 bg-danger/10 rounded-xl border-l-4 border-danger shadow-sm">
+                        <p class="text-gray-700 font-medium">
+                            <span class="font-semibold text-danger">Keterangan:</span> Hasil ini menunjukkan Anda mungkin belum sepenuhnya menyadari dampak tindakan Anda atau sering merasa tidak berdaya untuk bertindak positif. <span class="font-bold">Maksud dari skor ini adalah Anda sangat memerlukan bimbingan segera.</span> Prioritas utama adalah **memahami dampak buruk bullying** dan segera **berbicara dengan Guru BK** atau Wali Kelas.
+                        </p>
+                    </div>
+                    <p class="font-bold text-xl text-danger mb-2">Langkah Konkret (Mendesak):</p>
+                    <ul class="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                        <li>**Bicara Segera:** Wajib bicara dengan Guru BK, Wali Kelas, atau orang tuamu TENTANG HASIL INI. Jangan tunda!</li>
+                        <li>**Minta Maaf (Jika Perlu):** Jika kamu pernah menyakiti teman, minta maaf secara tulus. Ini adalah langkah pertama menuju perubahan.</li>
+                        <li>**Refleksi Mendalam:** Pikirkan, bagaimana perasaanmu jika kamu berada di posisi korban? Gunakan bagian UU & Hukuman untuk memahami risiko tindakanmu.</li>
+                        <li>**Fokus pada Empati:** Latih diri untuk melihat sesuatu dari sudut pandang orang lain. Setiap orang punya masalah dan cerita yang tidak kamu ketahui.</li>
+                    </ul>
+                `;
+                colorClasses = 'bg-danger text-white border-danger';
+                progressBar.classList.add('bg-danger');
+            }
+
+            resultLevel.textContent = level;
+            resultLevel.classList.add(...colorClasses.split(' '));
+            // MENGGUNAKAN innerHTML UNTUK MERENDER LIST HTML
+            personalAdvice.innerHTML = advice;
+
+            // Pindah ke halaman hasil
+            changeStage('results');
+        }
+
+        /**
+         * Event listener saat dokumen siap
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Muat pertanyaan kuis
+            loadQuiz();
+
+            // Handle submit form identitas
+            const identityForm = document.getElementById('identity-form');
+            if (identityForm) {
+                identityForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // Simpan data identitas
+                    appState.identity = {
+                        nama: document.getElementById('nama').value,
+                        kelas: document.getElementById('kelas').value,
+                        sekolah: document.getElementById('sekolah').value
+                    };
+                    // Pindah ke kuis
+                    changeStage('quiz');
+                });
+            }
+
+            // Handle Efek Tilt 3D
+            const tiltContainer = document.getElementById('image-tilt-container');
+            const tiltElement = tiltContainer.querySelector('.tilt-element');
+            if (tiltContainer && tiltElement) {
+                tiltContainer.addEventListener('mousemove', (e) => {
+                    const { left, top, width, height } = tiltContainer.getBoundingClientRect();
+                    const x = (e.clientX - left) / width - 0.5; // -0.5 to 0.5
+                    const y = (e.clientY - top) / height - 0.5; // -0.5 to 0.5
+
+                    const rotateY = x * 20; // Max 10 derajat
+                    const rotateX = -y * 20; // Max 10 derajat
+
+                    tiltElement.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+                });
+
+                tiltContainer.addEventListener('mouseleave', () => {
+                    tiltElement.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.0)';
+                });
+            }
+            
+            // Menutup menu jika mengklik di luar
+            document.addEventListener('click', (e) => {
+                const menu = document.getElementById('nav-menu');
+                const header = document.querySelector('.sticky-header');
+                if (!menu.classList.contains('hidden') && !header.contains(e.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
